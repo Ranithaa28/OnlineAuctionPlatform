@@ -58,7 +58,9 @@ private JwtAuthenticationFilter jwtAuthenticationFilter;
             .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/auth/**").permitAll()
+                .requestMatchers("/ws/**").permitAll()
                 .requestMatchers(org.springframework.http.HttpMethod.GET, "/auctions/**").permitAll()
+                .requestMatchers(org.springframework.http.HttpMethod.GET, "/bids/auction/**").permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
             )
@@ -70,7 +72,7 @@ private JwtAuthenticationFilter jwtAuthenticationFilter;
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:3001")); // your frontend origin
+        config.setAllowedOriginPatterns(List.of("*")); // Allow any origin pattern
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
