@@ -1,0 +1,83 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .status-active {
+    @apply inline-flex px-3 py-1 rounded-full text-sm font-medium bg-success-50 text-success-600;
+  }
+
+  .status-upcoming {
+    @apply inline-flex px-3 py-1 rounded-full text-sm font-medium bg-warning-50 text-warning-600;
+  }
+
+  .status-ended {
+    @apply inline-flex px-3 py-1 rounded-full text-sm font-medium bg-danger-50 text-danger-600;
+  }
+
+  .bg-theme-gradient {
+    @apply bg-gradient-to-r from-primary-600 to-secondary-600;
+  }
+
+  .bg-theme-gradient-reverse {
+    @apply bg-gradient-to-r from-secondary-600 to-primary-600;
+  }
+
+  .text-theme-primary {
+    @apply text-primary-600;
+  }
+
+  .text-theme-secondary {
+    @apply text-secondary-600;
+  }
+
+  .bg-theme-primary {
+    @apply bg-primary-600;
+  }
+
+  .bg-theme-secondary {
+    @apply bg-secondary-600;
+  }
+}
+
+@layer utilities {
+  .animate-fadeIn {
+    animation: fadeIn 1s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Gradient Text Utilities */
+  .gradient-text {
+    @apply bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent;
+    -webkit-background-clip: text;
+    -moz-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    -moz-text-fill-color: transparent;
+  }
+
+  .background-animate {
+    background-size: 400%;
+    -webkit-animation: gradient 3s ease infinite;
+    -moz-animation: gradient 3s ease infinite;
+    animation: gradient 3s ease infinite;
+  }
+}
+
+@keyframes gradient {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
