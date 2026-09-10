@@ -1,0 +1,44 @@
+services:
+  # Backend - Spring Boot Java
+  - type: web
+    name: auction-backend
+    runtime: java
+    buildCommand: "cd Auction && chmod +x mvnw && ./mvnw clean package -DskipTests"
+    startCommand: "java -jar Auction/target/Auction-0.0.1-SNAPSHOT.jar"
+    plan: free
+    envVars:
+      - key: SPRING_DATASOURCE_URL
+        sync: false
+      - key: SPRING_DATASOURCE_USERNAME
+        sync: false
+      - key: SPRING_DATASOURCE_PASSWORD
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: SPRING_MAIL_HOST
+        value: smtp-relay.brevo.com
+      - key: SPRING_MAIL_PORT
+        value: "587"
+      - key: SPRING_MAIL_USERNAME
+        sync: false
+      - key: SPRING_MAIL_PASSWORD
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+
+  # Frontend - React Static Site
+  - type: web
+    name: auction-frontend
+    runtime: static
+    buildCommand: "cd Auction-Frontend-main/my-app && npm install && npm run build"
+    staticPublishPath: Auction-Frontend-main/my-app/build
+    plan: free
+    envVars:
+      - key: REACT_APP_API_URL
+        sync: false
+      - key: REACT_APP_WS_URL
+        sync: false
