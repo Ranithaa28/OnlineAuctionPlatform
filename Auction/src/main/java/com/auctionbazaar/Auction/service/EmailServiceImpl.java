@@ -33,9 +33,8 @@ public class EmailServiceImpl implements EmailService {
             helper.setTo(to);
             helper.setSubject(subject);
             
-            // true indicates the text is HTML
-            boolean isHtml = body.trim().startsWith("<") && body.trim().endsWith(">");
-            helper.setText(body, isHtml);
+            // All emails sent from this application are HTML formatted
+            helper.setText(body, true);
             helper.setFrom("ranithaaravichandran@gmail.com"); // Ensure this email is verified in Brevo/SMTP provider
 
             // Sending email

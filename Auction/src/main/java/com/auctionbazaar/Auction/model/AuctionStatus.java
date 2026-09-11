@@ -4,5 +4,6 @@ public enum AuctionStatus {
     PENDING,
     APPROVED,
     REJECTED,
-    CLOSED
+    CLOSED,
+    COMPLETED
 }
