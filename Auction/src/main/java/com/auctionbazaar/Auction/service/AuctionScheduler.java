@@ -40,7 +40,13 @@ public class AuctionScheduler {
         Date now = new Date();
 
         for (Auction auction : allAuctions) {
-            if (auction.getEndDateTime() != null && auction.getEndDateTime().before(now) && !auction.isEndEmailsSent()) {
+            // Skip auctions already completed or closed
+            boolean alreadyDone = auction.getStatus() == AuctionStatus.COMPLETED
+                               || auction.getStatus() == AuctionStatus.CLOSED;
+            if (auction.getEndDateTime() != null
+                    && auction.getEndDateTime().before(now)
+                    && !auction.isEndEmailsSent()
+                    && !alreadyDone) {
                 try {
                     System.out.println("[Scheduler] Auction " + auction.getId() + " has ended. Processing emails...");
                     sendEndOfAuctionEmails(auction);
@@ -99,6 +105,7 @@ public class AuctionScheduler {
         System.out.println("[Scheduler] Processing end-of-auction emails for auction ID: " + auction.getId());
 
         List<Bid> bids = bidRepository.findByAuctionId(auction.getId());
+        System.out.println("[Scheduler] Found " + bids.size() + " bid(s) for auction ID: " + auction.getId());
 
         // ── Find the highest bid ──────────────────────────────────────────────
         Bid highestBid = null;
@@ -145,10 +152,7 @@ public class AuctionScheduler {
                         "<div style='background:linear-gradient(135deg,#10b981,#059669);border-radius:12px;padding:20px 24px;margin:24px 0;'>" +
                         "<p style='color:#ffffff;font-size:22px;font-weight:700;margin:0;text-align:center;'>Sold for " + winningAmount + "! 🎉</p>" +
                         "</div>" +
-                        "<p style='color:#475569;font-size:14px;line-height:1.6;'>Please log in to your dashboard to view the winner's details and arrange shipping and payment.</p>" +
-                        "<div style='text-align:center;margin-top:28px;'>" +
-                        "<a href='#' style='display:inline-block;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#ffffff;text-decoration:none;padding:14px 32px;border-radius:8px;font-weight:600;font-size:15px;'>Go to Dashboard</a>" +
-                        "</div>";
+                        "<p style='color:#475569;font-size:14px;line-height:1.6;'>Please log in to your dashboard to view the winner's details and arrange shipping and payment.</p>";
 
                 String ownerHtml = wrapInEmailTemplate(
                         "#10b981,#059669",
@@ -180,10 +184,7 @@ public class AuctionScheduler {
                         "<p style='color:#ffffff;font-size:20px;font-weight:700;margin:0;'>🎉 Congratulations, " + winnerName + "!</p>" +
                         "<p style='color:rgba(255,255,255,0.90);font-size:14px;margin:8px 0 0;'>You won with a bid of " + winningAmount + "</p>" +
                         "</div>" +
-                        "<p style='color:#475569;font-size:14px;line-height:1.6;'>Please log in to your dashboard to complete the purchase. The seller will contact you shortly with shipping and payment instructions.</p>" +
-                        "<div style='text-align:center;margin-top:28px;'>" +
-                        "<a href='#' style='display:inline-block;background:linear-gradient(135deg,#f59e0b,#d97706);color:#ffffff;text-decoration:none;padding:14px 32px;border-radius:8px;font-weight:600;font-size:15px;'>View My Win</a>" +
-                        "</div>";
+                        "<p style='color:#475569;font-size:14px;line-height:1.6;'>Please log in to your dashboard to complete the purchase. The seller will contact you shortly with shipping and payment instructions.</p>";
 
                 String winnerHtml = wrapInEmailTemplate(
                         "#f59e0b,#d97706",
@@ -249,10 +250,7 @@ public class AuctionScheduler {
                         auctionInfoTable +
                         "<div style='background:#fef2f2;border:1px solid #fca5a5;border-radius:10px;padding:16px 20px;margin:24px 0;'>" +
                         "<p style='color:#991b1b;font-size:15px;font-weight:600;margin:0;'>⚠️ No bids received</p>" +
-                        "<p style='color:#7f1d1d;font-size:13px;margin:8px 0 0;line-height:1.5;'>Consider adjusting your starting price or extending the auction duration for better results.</p>" +
-                        "</div>" +
-                        "<div style='text-align:center;margin-top:28px;'>" +
-                        "<a href='#' style='display:inline-block;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#ffffff;text-decoration:none;padding:14px 32px;border-radius:8px;font-weight:600;font-size:15px;'>Relist This Item</a>" +
+                        "<p style='color:#7f1d1d;font-size:13px;margin:8px 0 0;line-height:1.5;'>Consider adjusting your starting price or extending the auction duration for better results. You can relist the item from your dashboard.</p>" +
                         "</div>";
 
                 String ownerHtml = wrapInEmailTemplate(
