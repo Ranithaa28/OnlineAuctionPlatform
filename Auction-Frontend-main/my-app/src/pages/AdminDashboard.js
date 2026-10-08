@@ -97,7 +97,7 @@ const AdminDashboard = () => {
   }
 
   const totalUsers = users.length;
-  const activeAuctions = allAuctions.filter(a => a.status === 'APPROVED').length;
+  const activeAuctions = allAuctions.filter(a => a.status === 'APPROVED' || a.status === 'ACTIVE').length;
   const pendingCount = pendingAuctions.length;
 
   const adminMenu = [
@@ -384,11 +384,12 @@ const AdminDashboard = () => {
                           <td className="px-6 py-4 whitespace-nowrap text-gray-500">{a.createdBy}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-theme-primary font-semibold">${a.basePrice}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-center">
-                            <span className={`px-4 py-1.5 rounded-full text-xs font-bold border ${
-                              a.status === 'APPROVED' ? 'bg-green-50 text-green-600 border-green-200' :
-                              a.status === 'PENDING' ? 'bg-yellow-50 text-yellow-600 border-yellow-200' :
-                              'bg-red-50 text-red-600 border-red-200'
-                            }`}>
+                             <span className={`px-4 py-1.5 rounded-full text-xs font-bold border ${
+                               a.status === 'APPROVED' ? 'bg-green-50 text-green-600 border-green-200' :
+                               a.status === 'PENDING' ? 'bg-yellow-50 text-yellow-600 border-yellow-200' :
+                               a.status === 'COMPLETED' ? 'bg-purple-50 text-purple-600 border-purple-200' :
+                               'bg-red-50 text-red-600 border-red-200'
+                             }`}>
                               {a.status}
                             </span>
                           </td>

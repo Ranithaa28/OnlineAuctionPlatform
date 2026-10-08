@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import AuctionCard from './AuctionCard';
 import FilterSearch from './FilterSearch';
 import { FaGavel } from 'react-icons/fa';
-import { API_BASE, WS_BASE } from '../config/apiConfig';
+import { API_BASE } from '../config/apiConfig';
 
 
 const AuctionList = () => {
@@ -24,9 +24,16 @@ const AuctionList = () => {
       const response = await fetch(`${API_BASE}/auctions`);
       const result = await response.json();
       if (Array.isArray(result.data)) {
-        const approvedAuctions = result.data.filter(auction => auction.status === 'APPROVED');
-        setAuctions(approvedAuctions);
-        setFilteredAuctions(approvedAuctions);
+        const now = new Date();
+        // Only show APPROVED auctions that haven't ended yet
+        const liveAuctions = result.data.filter(
+          auction =>
+            auction.status === 'APPROVED' &&
+            auction.endDateTime &&
+            new Date(auction.endDateTime) > now
+        );
+        setAuctions(liveAuctions);
+        setFilteredAuctions(liveAuctions);
       }
     } catch (error) {
       console.error('Error fetching auctions:', error);
@@ -70,9 +77,8 @@ const AuctionList = () => {
         );
         break;
       case 'completed':
-        filtered = auctions.filter(auction => 
-          new Date(auction.endDateTime) < now
-        );
+        // Browse list only shows live auctions so nothing to filter here
+        filtered = [];
         break;
       default:
         filtered = auctions;

@@ -31,35 +31,37 @@ public class AuctionScheduler {
     @Autowired
     private EmailService emailService;
 
-    // Run every minute
+    // Run every minute — NOT @Transactional here to avoid long-held locks / deadlocks.
+    // Each auction is committed in its own isolated transaction via processAuction().
     @Scheduled(fixedRate = 60000)
-    @Transactional
     public void processEndedAuctions() {
-        // Find all auctions where end date has passed and emails haven't been sent yet
-        List<Auction> allAuctions = auctionRepository.findAll();
+        // Only fetch APPROVED auctions — DB does the filtering, no need for findAll()
+        List<Auction> approvedAuctions = auctionRepository.findByStatus(AuctionStatus.APPROVED);
         Date now = new Date();
 
-        for (Auction auction : allAuctions) {
-            // Skip auctions already completed or closed
-            boolean alreadyDone = auction.getStatus() == AuctionStatus.COMPLETED
-                               || auction.getStatus() == AuctionStatus.CLOSED;
+        for (Auction auction : approvedAuctions) {
             if (auction.getEndDateTime() != null
                     && auction.getEndDateTime().before(now)
-                    && !auction.isEndEmailsSent()
-                    && !alreadyDone) {
-                try {
-                    System.out.println("[Scheduler] Auction " + auction.getId() + " has ended. Processing emails...");
-                    sendEndOfAuctionEmails(auction);
-                    auction.setEndEmailsSent(true);
-                    auction.setStatus(AuctionStatus.COMPLETED);
-                    auctionRepository.save(auction);
-                    System.out.println("[Scheduler] Auction " + auction.getId() + " marked as COMPLETED and emails sent.");
-                } catch (Exception e) {
-                    System.err.println("[Scheduler] ❌ Failed to process end-of-auction for auction ID: "
-                            + auction.getId() + " - " + e.getMessage());
-                    e.printStackTrace();
-                }
+                    && !auction.isEndEmailsSent()) {
+                processAuction(auction);
             }
+        }
+    }
+
+    // Each auction is saved in its own transaction to prevent deadlocks
+    @Transactional
+    protected void processAuction(Auction auction) {
+        try {
+            System.out.println("[Scheduler] Auction " + auction.getId() + " has ended. Processing emails...");
+            sendEndOfAuctionEmails(auction);
+            auction.setEndEmailsSent(true);
+            auction.setStatus(AuctionStatus.COMPLETED);
+            auctionRepository.save(auction);
+            System.out.println("[Scheduler] Auction " + auction.getId() + " marked as COMPLETED and emails sent.");
+        } catch (Exception e) {
+            System.err.println("[Scheduler] ❌ Failed to process end-of-auction for auction ID: "
+                    + auction.getId() + " - " + e.getMessage());
+            e.printStackTrace();
         }
     }
 

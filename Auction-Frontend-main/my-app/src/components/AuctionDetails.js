@@ -21,6 +21,7 @@ const AuctionDetails = () => {
   const [bids, setBids] = useState([]);
   const [bidAmount, setBidAmount] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const [timeLeft, setTimeLeft] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -81,6 +82,25 @@ const AuctionDetails = () => {
     };
   }, [auctionId]);
 
+  // ── Live countdown: starts once auction data is loaded ────────────────────
+  useEffect(() => {
+    if (!auction?.endDateTime) return;
+    const calcTimeLeft = () => {
+      const diff = new Date(auction.endDateTime).getTime() - Date.now();
+      if (diff <= 0) { setTimeLeft(null); return; }
+      setTimeLeft({
+        days:    Math.floor(diff / (1000 * 60 * 60 * 24)),
+        hours:   Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+        minutes: Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)),
+        seconds: Math.floor((diff % (1000 * 60)) / 1000),
+        totalMs: diff,
+      });
+    };
+    calcTimeLeft();
+    const timer = setInterval(calcTimeLeft, 1000);
+    return () => clearInterval(timer);
+  }, [auction?.endDateTime]);
+
   const handleBidAmountChange = (e) => {
     setBidAmount(e.target.value);
   };
@@ -133,18 +153,18 @@ const AuctionDetails = () => {
     }
   };
 
-  const calculateTimeLeft = () => {
-    const now = new Date().getTime();
-    const endTime = new Date(auction.endDateTime).getTime();
-    const timeLeft = endTime - now;
-
-    if (timeLeft < 0) return 'Auction Ended';
-
-    const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-
-    return `${days}d ${hours}h ${minutes}m`;
+  const renderCountdown = () => {
+    if (!timeLeft) return <span className="text-red-500 animate-pulse">Auction Ended</span>;
+    const pad = (n) => String(n).padStart(2, '0');
+    const isUrgent = timeLeft.totalMs < 60 * 60 * 1000;
+    return (
+      <span className={isUrgent ? 'text-red-500 animate-pulse' : ''}>
+        {timeLeft.days > 0 && <>{timeLeft.days}<span className="text-sm font-semibold opacity-70">d </span></>}
+        {pad(timeLeft.hours)}<span className="text-sm font-semibold opacity-70">h </span>
+        {pad(timeLeft.minutes)}<span className="text-sm font-semibold opacity-70">m </span>
+        {pad(timeLeft.seconds)}<span className="text-sm font-semibold opacity-70">s</span>
+      </span>
+    );
   };
 
   const getCurrentHighestBid = () => {
@@ -229,7 +249,7 @@ const AuctionDetails = () => {
                       Time Left
                     </div>
                     <div className="fs-3 fw-bold text-secondary-600">
-                      {calculateTimeLeft()}
+                      {renderCountdown()}
                     </div>
                   </div>
                 </div>
@@ -278,7 +298,7 @@ const AuctionDetails = () => {
 
           {/* Bid History Section */}
           <div className="p-4 border-t border-gray-100">
-            <BidHistory auctionId={auction.id} realTimeBids={bids} />
+            <BidHistory realTimeBids={bids} />
           </div>
         </div>
       </div>

@@ -58,9 +58,11 @@ public class BidServiceImpl implements BidService {
 
                 String ownerEmail = auction.getCreatedBy(); // this is already the owner's email
                 if (ownerEmail != null) {
-                    String ownerHtml = "<h3>New Bid on Your Auction!</h3>" +
-                                       "<p>Good news! A new bid of <strong>$" + bid.getAmount() + "</strong> has been placed on your auction: <strong>" + auction.getTitle() + "</strong> (ID: " + bid.getAuctionId() + ").</p>" +
-                                       "<p>Log in to your Dashboard to view the latest bids.</p>";
+                    String ownerBody = "<p style='color:#1e293b;font-size:16px;margin:0 0 16px;'>Good news!</p>" +
+                                       "<p style='color:#475569;font-size:15px;line-height:1.6;margin:0 0 20px;'>" +
+                                       "A new bid of <strong>$" + bid.getAmount() + "</strong> has been placed on your auction: <strong>" + auction.getTitle() + "</strong> (ID: " + bid.getAuctionId() + ").</p>" +
+                                       "<p style='color:#475569;font-size:14px;line-height:1.6;'>Log in to your Dashboard to view the latest bids.</p>";
+                    String ownerHtml = emailService.wrapInEmailTemplate("#3b82f6,#2563eb", "📈", "New Bid on Your Auction!", ownerBody);
                     emailService.sendEmail(
                             ownerEmail,
                             "New Bid Received - " + auction.getTitle(),
@@ -68,10 +70,11 @@ public class BidServiceImpl implements BidService {
                     );
                 }
 
-                String bidderHtml = "<h3>Bid Placement Receipt</h3>" +
-                                    "<p>Hi " + bidder.getFirstName() + ",</p>" +
-                                    "<p>Thank you for placing a bid of <strong>$" + bid.getAmount() + "</strong> on auction: <strong>" + auction.getTitle() + "</strong> (ID: " + bid.getAuctionId() + ").</p>" +
-                                    "<p>You are currently the highest bidder! We will notify you if you are outbid or if you win the auction.</p>";
+                String bidderBody = "<p style='color:#1e293b;font-size:16px;margin:0 0 16px;'>Hi " + bidder.getFirstName() + ",</p>" +
+                                    "<p style='color:#475569;font-size:15px;line-height:1.6;margin:0 0 20px;'>" +
+                                    "Thank you for placing a bid of <strong>$" + bid.getAmount() + "</strong> on auction: <strong>" + auction.getTitle() + "</strong> (ID: " + bid.getAuctionId() + ").</p>" +
+                                    "<p style='color:#475569;font-size:14px;line-height:1.6;'>You are currently the highest bidder! We will notify you if you are outbid or if you win the auction.</p>";
+                String bidderHtml = emailService.wrapInEmailTemplate("#8b5cf6,#7c3aed", "✅", "Bid Placement Receipt", bidderBody);
                 emailService.sendEmail(
                         bidder.getEmail(),
                         "Bid Confirmation - " + auction.getTitle(),

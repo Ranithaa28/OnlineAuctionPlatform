@@ -1,7 +1,7 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { FaUser, FaCrown } from 'react-icons/fa';
 
-const BidHistory = ({ auctionId, realTimeBids = [] }) => {
+const BidHistory = ({ realTimeBids = [] }) => {
   const sortedBids = useMemo(() => {
     return [...realTimeBids].sort((a, b) => b.amount - a.amount);
   }, [realTimeBids]);

@@ -22,6 +22,25 @@ public class EmailServiceImpl implements EmailService {
 
     private static final Logger LOGGER = Logger.getLogger(EmailServiceImpl.class.getName());
 
+    /**
+     * Wraps the given HTML content in a branded, responsive email template.
+     */
+    @Override
+    public String wrapInEmailTemplate(String accentColor, String headerIcon, String headerTitle, String bodyContent) {
+        return "<div style=\"font-family: Arial, sans-serif; background-color: #f4f4f7; padding: 20px;\">" +
+                "<div style=\"max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1);\">" +
+                "<div style=\"background-color: " + accentColor.split(",")[0] + "; color: #ffffff; padding: 20px; text-align: center;\">" +
+                "<h1>" + headerIcon + " " + headerTitle + "</h1>" +
+                "</div>" +
+                "<div style=\"padding: 30px; color: #333333; line-height: 1.6;\">" +
+                bodyContent +
+                "</div>" +
+                "<div style=\"text-align: center; padding: 15px; font-size: 12px; color: #888888; background: #f9f9f9;\">" +
+                "&copy; Auction Bazaar. All rights reserved." +
+                "</div>" +
+                "</div>" +
+                "</div>";
+    }
 
     @Override
     public String sendEmail(String to, String subject, String body) {

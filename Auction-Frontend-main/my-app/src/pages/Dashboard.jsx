@@ -41,11 +41,16 @@ const Dashboard = () => {
     fetchAuctions();
   }, [user, navigate]);
 
-  const getStatus = (startDateTime, endDateTime) => {
+  const getStatus = (auction) => {
     const now = new Date();
-    const start = new Date(startDateTime);
-    const end = new Date(endDateTime);
+    const start = new Date(auction.startDateTime);
+    const end = new Date(auction.endDateTime);
 
+    if (auction.status === 'PENDING') return <span className="status-pending">Pending Approval</span>;
+    if (auction.status === 'REJECTED') return <span className="status-ended">Rejected</span>;
+    if (auction.status === 'COMPLETED') return <span className="status-ended">Completed</span>;
+    if (auction.status === 'CLOSED') return <span className="status-ended">Closed</span>;
+    // APPROVED: further refine by time
     if (now < start) return <span className="status-upcoming">Upcoming</span>;
     if (now > end) return <span className="status-ended">Ended</span>;
     return <span className="status-active">Active</span>;
@@ -124,11 +129,11 @@ const Dashboard = () => {
         <div className="mt-16">
           <div className="flex justify-between items-center mb-8">
             <h2 className="text-3xl font-bold text-gray-800 flex items-center">
-              <FaHistory className="mr-3 text-gray-500-600" /> Recent Activity
+              <FaHistory className="mr-3 text-gray-500" /> Recent Activity
             </h2>
             <button
               onClick={() => navigate('/user-auctions')}
-              className="px-6 py-4 bg-blue-600-600 text-white rounded-full hover:bg-blue-600-700 transition transform hover:scale-105 shadow-md inline-flex items-center"
+              className="px-6 py-4 bg-theme-primary text-white rounded-full hover:bg-theme-secondary transition transform hover:scale-105 shadow-md inline-flex items-center"
             >
               View All <FaArrowRight className="ml-2" />
             </button>
@@ -162,7 +167,7 @@ const Dashboard = () => {
                           {new Date(auction.endDateTime).toLocaleDateString()}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          {getStatus(auction.startDateTime, auction.endDateTime)}
+                          {getStatus(auction)}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex space-x-3">

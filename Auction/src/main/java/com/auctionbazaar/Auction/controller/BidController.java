@@ -28,6 +28,13 @@ public class BidController {
     @PostMapping
     public ResponseEntity<ApiResponse<Bid>> createBid(@RequestBody Bid bid,
                                                         @AuthenticationPrincipal User currentUser) {
+        if (currentUser.getRole() == Role.ADMIN) {
+            return new ResponseEntity<>(
+                new ApiResponse<>("Admins are not allowed to place bids", HttpStatus.FORBIDDEN.value(), null),
+                HttpStatus.FORBIDDEN
+            );
+        }
+
         bid.setUserId(currentUser.getId());
         bid.setCreatedBy(currentUser.getEmail());
 

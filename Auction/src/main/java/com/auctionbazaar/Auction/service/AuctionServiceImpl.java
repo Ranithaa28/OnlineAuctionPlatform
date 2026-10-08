@@ -38,9 +38,11 @@ public class AuctionServiceImpl implements AuctionService {
         java.util.concurrent.CompletableFuture.runAsync(() -> {
             try {
                 java.util.List<com.auctionbazaar.Auction.model.User> admins = userRepository.findByRole(com.auctionbazaar.Auction.model.Role.ADMIN);
-                String adminHtml = "<h3>New Auction Pending Approval</h3>" +
-                                   "<p>A new auction <strong>" + savedAuction.getTitle() + "</strong> (ID: " + savedAuction.getId() + ") has been created by " + savedAuction.getCreatedBy() + ".</p>" +
-                                   "<p>Please review and approve this auction in the Admin Dashboard.</p>";
+                String adminBody = "<p style='color:#1e293b;font-size:16px;margin:0 0 16px;'>A new auction requires your attention.</p>" +
+                                   "<p style='color:#475569;font-size:15px;line-height:1.6;margin:0 0 20px;'>" +
+                                   "A new auction <strong>" + savedAuction.getTitle() + "</strong> (ID: " + savedAuction.getId() + ") has been created by " + savedAuction.getCreatedBy() + ".</p>" +
+                                   "<p style='color:#475569;font-size:14px;line-height:1.6;'>Please review and approve this auction in the <a href=\"http://localhost:3000/admin\">Admin Dashboard</a>.</p>";
+                String adminHtml = emailService.wrapInEmailTemplate("#f59e0b,#d97706", "🔔", "New Auction Pending Approval", adminBody);
                 for (com.auctionbazaar.Auction.model.User admin : admins) {
                     emailService.sendEmail(admin.getEmail(), "Action Required: New Auction Pending Approval", adminHtml);
                 }

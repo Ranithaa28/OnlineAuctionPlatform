@@ -3,8 +3,6 @@ package com.auctionbazaar.Auction.controller;
 import com.auctionbazaar.Auction.model.Role;
 import com.auctionbazaar.Auction.model.User;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import com.auctionbazaar.Auction.model.User;
 import com.auctionbazaar.Auction.model.AuctionStatus;
 import com.auctionbazaar.Auction.model.Auction;
 import com.auctionbazaar.Auction.model.ItemImages;
