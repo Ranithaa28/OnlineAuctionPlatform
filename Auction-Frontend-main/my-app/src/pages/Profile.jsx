@@ -4,7 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import { FaUser, FaEnvelope, FaPhone, FaArrowLeft, FaEdit, FaTrash } from "react-icons/fa";
 import { toast } from 'react-toastify';
 import { deleteUser } from '../services/authService';
-import { API_BASE, WS_BASE } from '../config/apiConfig';
+import { API_BASE } from '../config/apiConfig';
 
 
 const Profile = () => {

@@ -5,14 +5,14 @@ echo ==============================================
 
 echo.
 echo [1/2] Starting Spring Boot Backend (Port 8080)...
-cd /d "c:\Online_Auction_Platform\Auction"
-start "Auction Backend" cmd /c "./mvnw spring-boot:run"
+cd /d "%~dp0Auction"
+start "Auction Backend" cmd /k "mvnw.cmd spring-boot:run"
 
 echo.
 echo [2/2] Starting React Frontend (Port 3001)...
-cd /d "c:\Online_Auction_Platform\Auction-Frontend-main\my-app"
+cd /d "%~dp0Auction-Frontend-main\my-app"
 set PORT=3001
-start "Auction Frontend" cmd /c "npm start"
+start "Auction Frontend" cmd /k "npm start"
 
 echo.
 echo ==============================================

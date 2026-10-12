@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { FaImage } from 'react-icons/fa';
-import { API_BASE, WS_BASE } from '../config/apiConfig';
+import { API_BASE } from '../config/apiConfig';
 
 
 const AuctionImage = ({ auctionId }) => {

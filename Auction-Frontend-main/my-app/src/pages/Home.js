@@ -4,7 +4,7 @@ import { FaGavel, FaShieldAlt, FaClock, FaUsers, FaArrowRight, FaStar, FaTrophy 
 import Footer from '../components/Footer';
 import Navbar from '../components/Navbar';
 import AuctionImage from '../components/AuctionImage';
-import { API_BASE, WS_BASE } from '../config/apiConfig';
+import { API_BASE } from '../config/apiConfig';
 
 
 const Home = () => {
