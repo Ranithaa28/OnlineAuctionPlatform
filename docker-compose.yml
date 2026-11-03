@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  mysql-db:
+    image: mysql:8.0
+    container_name: auction-mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: auction_platform
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_USER: auction_app
+      MYSQL_PASSWORD: apppassword
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  backend:
+    build:
+      context: ./Auction
+      dockerfile: Dockerfile
+    container_name: auction-backend
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      PORT: 8080
+      DB_URL: jdbc:mysql://mysql-db:3306/auction_platform?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      DB_USERNAME: auction_app
+      DB_PASSWORD: apppassword
+      EMAIL_PASSWORD: ${EMAIL_PASSWORD:-}
+      JWT_SECRET: ${JWT_SECRET:-your_very_long_secure_default_secret_key_that_is_at_least_256_bits_long_1234567890}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-ranithaaravichandran@gmail.com}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-ranitha28!}
+    depends_on:
+      - mysql-db
+
+  frontend:
+    build:
+      context: ./Auction-Frontend-main/my-app
+      dockerfile: Dockerfile
+      args:
+        REACT_APP_API_URL: http://localhost:8080
+        REACT_APP_WS_URL: http://localhost:8080/ws
+    container_name: auction-frontend
+    restart: always
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
+volumes:
+  mysql_data:
